@@ -25,8 +25,8 @@ export default function LoginPage() {
   const navigatePage = () => {
     router.push("/register");
   };
-  const navigateToTranscribePage = () => {
-    router.push("/transcribe");
+  const navigateToSummarizePage = () => {
+    router.push("/summarize");
   };
   return (
     <Flex
@@ -81,7 +81,7 @@ export default function LoginPage() {
             _hover={{
               bg: "blue.500",
             }}
-            onClick={navigateToTranscribePage}
+            onClick={navigateToSummarizePage}
           >
             Log In
           </Button>
