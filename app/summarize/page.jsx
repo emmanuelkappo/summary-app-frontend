@@ -1,42 +1,65 @@
-// pages/upload.js
-
+// pages/SummarizePage.js
 "use client";
 
-import React, { useState } from "react";
-import { Button, FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { useState } from "react";
+import {
+  Button,
+  Container,
+  FormControl,
+  FormLabel,
+  Text,
+  Textarea,
+} from "@chakra-ui/react";
 
 export default function SummarizePage() {
-  const [file, setFile] = useState(null);
+  const [text, setText] = useState("");
+  const [summary, setSummary] = useState("");
 
-  const handleFileChange = (e) => {
-    console.log("Changed");
-    setFile(e.target.files[0]);
+  const handleTextChange = (e) => {
+    setText(e.target.value);
   };
 
   const handleSubmit = async () => {
-    console.log("Submitted");
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const response = await fetch("http://127.0.0.1:8000/summarize", {
+      const query = new URLSearchParams({ content: text }).toString();
+
+      const response = await fetch(`http://127.0.0.1:8000/summarize?${query}`, {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to summarize text");
+      }
+
       const data = await response.json();
-      console.log(data);
+      const content = data.choices[0].message.content;
+      setSummary(content);
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   return (
-    <div>
+    <Container padding={10} alignItems={"center"}>
+      <Text mb={4} fontWeight={"bold"} fontSize={"lg"}>
+        Summarize App
+      </Text>
+
       <FormControl>
-        <FormLabel>Select MP3 file:</FormLabel>
-        <Input type="file" accept=".mp3" onChange={handleFileChange} />
+        <FormLabel fontSize={"sm"}>Input Large Text:</FormLabel>
+        <Textarea value={text} onChange={handleTextChange} />
       </FormControl>
-      <Button onClick={handleSubmit}>Upload</Button>
-    </div>
+      <Button color={"blue"} mt={4} onClick={handleSubmit}>
+        Summarize
+      </Button>
+
+      <Text mt={4} mb={4} fontWeight={"bold"} fontSize={"lg"}>
+        Result:
+      </Text>
+      {summary && <Text mb={4}>{summary}</Text>}
+    </Container>
   );
 }
