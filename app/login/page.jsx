@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import {
   Button,
   Checkbox,
@@ -15,19 +17,68 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useToast,
 } from "@chakra-ui/react";
+
 import { useRouter } from "next/navigation";
+
+// import { useRouter } from "next/router";
+
 import { Center, Square, Circle } from "@chakra-ui/react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const toast = useToast();
 
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const signIn = async () => {
+    try {
+      setLoading(true);
+
+      const formData = new URLSearchParams();
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("grant_type", "");
+      formData.append("scope", "");
+      formData.append("client_id", "");
+      formData.append("client_secret", "");
+
+      const res = await fetch("http://127.0.0.1:8000/auth/token", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Log in failed");
+      }
+      setLoading(false);
+      toast({ title: "Login in", status: "success" });
+      router.push("/summarize");
+    } catch (err) {
+      setLoading(false);
+      toast({ title: err?.message, status: "error" });
+      setError(err?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
   const navigatePage = () => {
     router.push("/register");
   };
+
   const navigateToSummarizePage = () => {
     router.push("/summarize");
   };
+
   return (
     <Flex
       minH={"100vh"}
@@ -58,12 +109,24 @@ export default function LoginPage() {
             placeholder="your-email@example.com"
             _placeholder={{ color: "gray.500" }}
             type="email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </FormControl>
         <FormControl id="password" isRequired>
           <FormLabel>Password</FormLabel>
-          <Input type="password" />
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </FormControl>
+
+        {/* {error && (
+          <Text color="red.500" fontSize="sm" mt={2}>
+            {error}
+          </Text>
+        )} */}
 
         <Stack spacing={6}>
           <Stack
@@ -81,7 +144,7 @@ export default function LoginPage() {
             _hover={{
               bg: "blue.500",
             }}
-            onClick={navigateToSummarizePage}
+            onClick={signIn}
           >
             Log In
           </Button>
