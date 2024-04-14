@@ -16,57 +16,58 @@ import {
   useColorModeValue,
   Link,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [email, setemail] = useState();
+  const [first_name, setfirst_name] = useState();
+  const [last_name, setlast_name] = useState();
+  const [password, setpassword] = useState();
+  const toast = useToast();
 
   const signUp = async () => {
-    console.log(username, password);
+    console.log(first_name);
+    console.log(first_name);
+    console.log(email);
+    console.log(password);
     try {
       setLoading(true);
-
-      const formData = new URLSearchParams();
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("grant_type", "");
-      formData.append("scope", "");
-      formData.append("client_id", "");
-      formData.append("client_secret", "");
 
       const res = await fetch("http://127.0.0.1:8000/auth", {
         method: "POST",
         headers: {
           accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
-        body: formData,
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          first_name: first_name,
+          last_name: last_name,
+        }),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error("Log in failed");
+        throw new Error("Registration failed");
       }
       setLoading(false);
-      toast({ title: "Login in", status: "success" });
-      router.push("/summarize");
+      toast({ title: "Registration", status: "success" });
+      router.push("/login");
     } catch (err) {
       setLoading(false);
-      // toast({ title: err?.message, status: "error" });
+      toast({ title: err?.message, status: "error" });
       setError(err?.message);
     } finally {
       setLoading(false);
     }
-  };
-
-  const navigateToSummarizePage = () => {
-    router.push("/summarize");
   };
 
   const navigateToLoginPage = () => {
@@ -102,24 +103,33 @@ export default function RegisterPage() {
               <Box>
                 <FormControl id="firstName" isRequired>
                   <FormLabel>First Name</FormLabel>
-                  <Input type="text" />
+                  <Input
+                    type="text"
+                    onChange={(e) => setfirst_name(e.target.value)}
+                  />
                 </FormControl>
               </Box>
               <Box>
                 <FormControl id="lastName">
                   <FormLabel>Last Name</FormLabel>
-                  <Input type="text" />
+                  <Input
+                    type="text"
+                    onChange={(e) => setlast_name(e.target.value)}
+                  />
                 </FormControl>
               </Box>
             </HStack>
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input type="email" onChange={(e) => setemail(e.target.value)} />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  onChange={(e) => setpassword(e.target.value)}
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}

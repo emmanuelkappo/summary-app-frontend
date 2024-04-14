@@ -10,11 +10,16 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
 
 export default function SummarizePage() {
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
-
+  const router = useRouter();
+  const logout = () => {
+    window.localStorage.removeItem("token");
+    router.push("/login");
+  };
   const handleTextChange = (e) => {
     setText(e.target.value);
   };
@@ -27,6 +32,7 @@ export default function SummarizePage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer " + window.localStorage.getItem("token"),
         },
       });
 
@@ -54,6 +60,17 @@ export default function SummarizePage() {
       </FormControl>
       <Button color={"blue"} mt={4} onClick={handleSubmit}>
         Summarize
+      </Button>
+
+      <Button
+        bg={"blue.400"}
+        color={"white"}
+        _hover={{
+          bg: "blue.500",
+        }}
+        onClick={logout}
+      >
+        Log Out
       </Button>
 
       <Text mt={4} mb={4} fontWeight={"bold"} fontSize={"lg"}>

@@ -56,12 +56,13 @@ export default function LoginPage() {
         body: formData,
       });
       const data = await res.json();
-
+      console.log(data);
       if (!res.ok) {
         throw new Error("Log in failed");
       }
       setLoading(false);
       toast({ title: "Login in", status: "success" });
+      window.localStorage.setItem("token", data.access_token);
       router.push("/summarize");
     } catch (err) {
       setLoading(false);
