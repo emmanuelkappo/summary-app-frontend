@@ -20,13 +20,59 @@ import {
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
+// import { useRouter } from "next/router";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const navigatePage = () => {
+  const signUp = async () => {
+    console.log(username, password);
+    try {
+      setLoading(true);
+
+      const formData = new URLSearchParams();
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("grant_type", "");
+      formData.append("scope", "");
+      formData.append("client_id", "");
+      formData.append("client_secret", "");
+
+      const res = await fetch("http://127.0.0.1:8000/auth", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error("Log in failed");
+      }
+      setLoading(false);
+      toast({ title: "Login in", status: "success" });
+      router.push("/summarize");
+    } catch (err) {
+      setLoading(false);
+      // toast({ title: err?.message, status: "error" });
+      setError(err?.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const navigateToSummarizePage = () => {
+    router.push("/summarize");
+  };
+
+  const navigateToLoginPage = () => {
     router.push("/login");
   };
+
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -42,7 +88,7 @@ export default function RegisterPage() {
             Sign up
           </Heading>
           <Text fontSize={"lg"} color={"gray.600"}>
-            to get rainfall imformation
+            to summarize your texts
           </Text>
         </Stack>
         <Box
@@ -95,6 +141,7 @@ export default function RegisterPage() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                onClick={signUp}
               >
                 Sign up
               </Button>
@@ -106,7 +153,7 @@ export default function RegisterPage() {
                 height="48px"
                 width="200px"
                 borderColor="blue"
-                onClick={navigatePage}
+                onClick={navigateToLoginPage}
               >
                 <Center>
                   Already a user?{" "}
