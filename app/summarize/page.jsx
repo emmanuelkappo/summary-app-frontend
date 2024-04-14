@@ -9,6 +9,7 @@ import {
   FormLabel,
   Text,
   Textarea,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
@@ -16,6 +17,7 @@ export default function SummarizePage() {
   const [text, setText] = useState("");
   const [summary, setSummary] = useState("");
   const router = useRouter();
+  const toast = useToast();
   const logout = () => {
     window.localStorage.removeItem("token");
     router.push("/login");
@@ -45,6 +47,10 @@ export default function SummarizePage() {
       setSummary(content);
     } catch (error) {
       console.error("Error:", error);
+      toast({
+        title: "could not summarize. You have to login",
+        status: "error",
+      });
     }
   };
 
