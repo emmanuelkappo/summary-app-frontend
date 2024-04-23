@@ -37,9 +37,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   // If the token is found, redirect to the summarize page
-  if (window.localStorage) {
-    if (localStorage.getItem("token")) {
-      router.push("/summarize");
+  if (typeof window !== "undefined") {
+    if (window.localStorage) {
+      if (localStorage.getItem("token")) {
+        router.push("/summarize");
+      }
     }
   }
 
@@ -70,8 +72,10 @@ export default function LoginPage() {
       }
       setLoading(false);
       toast({ title: "Login in successfully", status: "success" });
-      if (window.localStorage) {
-        localStorage.setItem("token", data.access_token);
+      if (typeof window !== "undefined") {
+        if (window.localStorage) {
+          localStorage.setItem("token", data.access_token);
+        }
       }
 
       router.push("/summarize");

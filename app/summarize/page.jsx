@@ -24,15 +24,19 @@ export default function SummarizePage() {
   const toast = useToast();
 
   // Redirect if the token is not found
-  if (window.localStorage) {
-    if (!localStorage.getItem("token")) {
-      router.push("/login");
+  if (typeof window !== "undefined") {
+    if (window.localStorage) {
+      if (!localStorage.getItem("token")) {
+        router.push("/login");
+      }
     }
   }
 
   const logout = () => {
-    if (window.localStorage) {
-      window.localStorage.removeItem("token");
+    if (typeof window !== "undefined") {
+      if (window.localStorage) {
+        window.localStorage.removeItem("token");
+      }
     }
 
     router.push("/login");
@@ -45,15 +49,19 @@ export default function SummarizePage() {
     setLoading(true);
     try {
       const query = new URLSearchParams({ content: text }).toString();
-
-      if (window.localStorage) {
-        const response = await fetch(`${CONFIG.API_ROOT}/summarize?${query}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + window.localStorage.getItem("token"),
-          },
-        });
+      if (typeof window !== "undefined") {
+        if (window.localStorage) {
+          const response = await fetch(
+            `${CONFIG.API_ROOT}/summarize?${query}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + window.localStorage.getItem("token"),
+              },
+            }
+          );
+        }
       }
 
       const data = await response.json();
