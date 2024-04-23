@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 // import { useRouter } from "next/router";
 
 import { Center, Square, Circle } from "@chakra-ui/react";
-import {CONFIG} from "@/app/config/config";
+import { CONFIG } from "@/app/config/config";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,9 +37,9 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   // If the token is found, redirect to the summarize page
-    if (localStorage.getItem("token")) {
-        router.push("/summarize");
-    }
+  if (localStorage.getItem("token")) {
+    router.push("/summarize");
+  }
 
   const signIn = async () => {
     try {
@@ -135,7 +135,7 @@ export default function LoginPage() {
           </Text>
         )} */}
 
-        <Stack spacing={6} px={'2%'}>
+        <Stack spacing={6} px={"2%"}>
           <Stack
             direction={{ base: "column", sm: "row" }}
             align={"start"}
@@ -167,7 +167,7 @@ export default function LoginPage() {
           onClick={navigatePage}
         >
           <Center>
-            Don't have an account?
+            Dont have an account?
             <Text ml={1} color="blue.400">
               Register
             </Text>
