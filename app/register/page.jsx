@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
+import { CONFIG } from "@/app/config/config";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      const res = await fetch("http://127.0.0.1:8000/auth", {
+      const res = await fetch(`${CONFIG.API_ROOT}/auth`, {
         method: "POST",
         headers: {
           accept: "application/json",
@@ -59,7 +60,7 @@ export default function RegisterPage() {
         throw new Error("Registration failed");
       }
       setLoading(false);
-      toast({ title: "Registration", status: "success" });
+      toast({ title: "Registration Successful", status: "success" });
       router.push("/login");
     } catch (err) {
       setLoading(false);

@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 // import { useRouter } from "next/router";
 
 import { Center, Square, Circle } from "@chakra-ui/react";
+import {CONFIG} from "@/app/config/config";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,6 +35,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // If the token is found, redirect to the summarize page
+    if (localStorage.getItem("token")) {
+        router.push("/summarize");
+    }
 
   const signIn = async () => {
     try {
@@ -47,7 +53,7 @@ export default function LoginPage() {
       formData.append("client_id", "");
       formData.append("client_secret", "");
 
-      const res = await fetch("http://127.0.0.1:8000/auth/token", {
+      const res = await fetch(`${CONFIG.API_ROOT}/auth/token`, {
         method: "POST",
         headers: {
           accept: "application/json",
@@ -61,8 +67,8 @@ export default function LoginPage() {
         throw new Error("Log in failed");
       }
       setLoading(false);
-      toast({ title: "Login in", status: "success" });
-      window.localStorage.setItem("token", data.access_token);
+      toast({ title: "Login in successfully", status: "success" });
+      localStorage.setItem("token", data.access_token);
       router.push("/summarize");
     } catch (err) {
       setLoading(false);
@@ -129,7 +135,7 @@ export default function LoginPage() {
           </Text>
         )} */}
 
-        <Stack spacing={6}>
+        <Stack spacing={6} px={'2%'}>
           <Stack
             direction={{ base: "column", sm: "row" }}
             align={"start"}
@@ -157,6 +163,7 @@ export default function LoginPage() {
           height="48px"
           width="200px"
           borderColor="blue"
+          marginLeft={"8%"}
           onClick={navigatePage}
         >
           <Center>
