@@ -37,8 +37,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   // If the token is found, redirect to the summarize page
-  if (localStorage.getItem("token")) {
-    router.push("/summarize");
+  if (window.localStorage) {
+    if (localStorage.getItem("token")) {
+      router.push("/summarize");
+    }
   }
 
   const signIn = async () => {
@@ -68,7 +70,10 @@ export default function LoginPage() {
       }
       setLoading(false);
       toast({ title: "Login in successfully", status: "success" });
-      localStorage.setItem("token", data.access_token);
+      if (window.localStorage) {
+        localStorage.setItem("token", data.access_token);
+      }
+
       router.push("/summarize");
     } catch (err) {
       setLoading(false);
