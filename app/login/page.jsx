@@ -68,7 +68,7 @@ export default function LoginPage() {
       const data = await res.json();
       console.log(data);
       if (!res.ok) {
-        throw new Error("Log in failed");
+        throw new Error("User does not exist");
       }
       setLoading(false);
       toast({ title: "Login in successfully", status: "success" });
