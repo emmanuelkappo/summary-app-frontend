@@ -12,6 +12,7 @@ import {
   useToast,
   Spinner,
   Progress,
+  Box,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { CONFIG } from "@/app/config/config";
@@ -61,24 +62,30 @@ export default function SummarizePage() {
               },
             }
           );
-        }
-      }
 
-      const data = await response.json();
-      if (!response.ok) {
-        if (response.status === 401) {
-          setTimeout(() => {
-            logout();
-          }, 10000);
+          const data = await response.json();
+          if (!response.ok) {
+            if (response.status === 401) {
+              setTimeout(() => {
+                logout();
+              }, 10000);
+            }
+            throw new Error(
+              response.status === 401
+                ? "Token has expired, you will be redirected to the login page in 10 secs"
+                : data.detail
+            );
+          }
+          // Paste toast
+
+          toast({
+            title: "Summary successful",
+            status: "success",
+          });
+          const content = data.choices[0].message.content;
+          setSummary(content);
         }
-        throw new Error(
-          response.status === 401
-            ? "Token has expired, you will be redirected to the login page in 10 secs"
-            : data.detail
-        );
       }
-      const content = data.choices[0].message.content;
-      setSummary(content);
     } catch (error) {
       console.error("Error:", error);
       toast({
@@ -97,25 +104,33 @@ export default function SummarizePage() {
       </Text>
 
       <FormControl>
-        <FormLabel fontSize={"sm"}>Input Large Text:</FormLabel>
+        <Box display={"flex"} justifyContent={"space-between"}>
+          <FormLabel fontSize={"sm"}>Input Large Text:</FormLabel>
+          <a target="_blank" href={"architecture.pdf"}>
+            Download Architecture
+          </a>
+        </Box>
+
         <Textarea value={text} onChange={handleTextChange} />
       </FormControl>
-      <Button disabled={loading} color={"blue"} mt={4} onClick={handleSubmit}>
-        {loading ? <Spinner size={"xs"} /> : "Summarize"}
-      </Button>
+      <Box display={"flex"} justifyContent={"space-between"}>
+        <Button disabled={loading} color={"blue"} mt={4} onClick={handleSubmit}>
+          {loading ? <Spinner size={"xs"} /> : "Summarize"}
+        </Button>
 
-      <Button
-        mt={4}
-        mx={4}
-        bg={"blue.400"}
-        color={"white"}
-        _hover={{
-          bg: "blue.500",
-        }}
-        onClick={logout}
-      >
-        Log Out
-      </Button>
+        <Button
+          mt={4}
+          mx={4}
+          bg={"blue.400"}
+          color={"white"}
+          _hover={{
+            bg: "blue.500",
+          }}
+          onClick={logout}
+        >
+          Log Out
+        </Button>
+      </Box>
 
       <Text mt={4} mb={4} fontWeight={"bold"} fontSize={"lg"}>
         Result:

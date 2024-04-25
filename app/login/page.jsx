@@ -114,10 +114,10 @@ export default function LoginPage() {
       >
         <Heading
           lineHeight={1.1}
-          fontSize={{ base: "2xl", md: "3xl" }}
+          fontSize={{ base: "2x1", md: "3xl" }}
           textAlign={"center"}
         >
-          Login
+          Welcome to the Summarize App
         </Heading>
         <FormControl id="email" isRequired>
           <FormLabel>Email address</FormLabel>
